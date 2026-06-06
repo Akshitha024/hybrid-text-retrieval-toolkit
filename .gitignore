@@ -34,3 +34,6 @@ data/processed/
 
 # hf cache
 .hf-cache/
+
+# always track the rendered report PDF
+!docs/research_report.pdf
