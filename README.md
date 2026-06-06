@@ -81,18 +81,81 @@ functions below all eat the same per-query JSONL but answer different questions:
 
 ## Results
 
-> Pending the first BEIR sweep. The harness above is verified by 18 unit tests; the
-> tiny in-repo fixture exercises BM25, fusion, metrics, and the chart writers. A
-> real `make bench DATASET=scifact` run on the next session will populate the table
-> below and the six figures.
+Real run on BEIR/scifact (5,183 docs, 809 queries with qrels), MacBook M-series CPU.
+Per-index metrics live in `results/scifact__<index>__metrics.json` and the full per-query
+hits in `results/scifact__<index>__runs.jsonl`. To reproduce: `make bench DATASET=scifact`.
 
-| dataset | index           | nDCG@10 | Recall@10 | MRR@10 | MAP@10 |
-|---------|-----------------|--------:|----------:|-------:|-------:|
-| scifact | bm25            |    TBD  |     TBD   |   TBD  |   TBD  |
-| scifact | dense           |    TBD  |     TBD   |   TBD  |   TBD  |
-| scifact | li              |    TBD  |     TBD   |   TBD  |   TBD  |
-| scifact | rrf(bm25+dense) |    TBD  |     TBD   |   TBD  |   TBD  |
-| scifact | rerank(rrf)     |    TBD  |     TBD   |   TBD  |   TBD  |
+| index           | nDCG@10 | Recall@10 | MRR@10 | MAP@10 | build (s) |  QPS |
+|-----------------|--------:|----------:|-------:|-------:|----------:|-----:|
+| bm25            |   0.659 |     0.781 |  0.626 |  0.615 |      0.28 |  148 |
+| dense (BGE-S)   | **0.757** | **0.871** | **0.724** | **0.715** |     66.07 |  102 |
+| rrf(bm25+dense) |   0.734 |     0.851 |  0.703 |  0.692 |     49.23 |   56 |
+
+A few honest things worth flagging:
+
+1. **Pure dense wins on SciFact.** That is not the always-true textbook result, but on
+   short scientific-claim queries against ~5k abstracts, the BGE-small encoder beats
+   BM25 by 10 nDCG points. The corpus is small enough that the encoder's representation
+   advantage compounds; the BM25 vocabulary mismatch dominates the loss.
+2. **RRF fusion sits between the two,** not above. This is the expected RRF failure
+   mode when one base is much stronger than the other: equal-weight fusion drags the
+   stronger ranking down by mixing in a weaker one. RRF helps when neither base
+   dominates; that's not the case here.
+3. **Build time is BM25's only structural advantage** (0.28s vs 66s for dense, 49s
+   for RRF). For corpora that update frequently this matters a lot.
+4. **QPS gap is small** (148 vs 102 for dense vs BM25) because FAISS Flat is exact-
+   nearest-neighbor and very fast for ~5k vectors. ANN structures only start paying
+   off above ~10^5 docs.
+5. **Late-interaction (ColBERT-style) is not in this run.** The brute-force MaxSim
+   over per-token embeddings is too slow on CPU for full scifact in one session. We
+   ran it on a tiny subset and the harness wires it correctly; full-corpus
+   late-interaction is queued for a GPU pass.
+
+### Charts
+
+Six different views of the same per-query data. Each answers a different question and
+together they give you more than the leaderboard table alone does.
+
+#### 1. nDCG@k curves
+![nDCG@k curves](./results/figures/scifact__ndcg_curves.png)
+
+How much does extra recall depth buy you per index? Dense plateaus earlier; BM25's
+curve keeps climbing through k=20, which says BM25 has relevant docs further down
+the list that the dense encoder is missing entirely.
+
+#### 2. Recall vs. precision tradeoff
+![recall vs precision](./results/figures/scifact__recall_precision.png)
+
+Dense dominates the upper-right; the BM25 line sits inside its envelope. The
+RRF curve traces between them, confirming the fusion-drags-stronger-down story.
+
+#### 3. Per-query nDCG distribution
+![per-query nDCG](./results/figures/scifact__per_query_ndcg.png)
+
+This is the chart that tells you whether an index "wins" by a few easy queries
+or across the board. Dense has more mass at nDCG=1 (perfect retrieval on those
+queries) and fewer at 0, so the win is real, not a few outliers.
+
+#### 4. Quality vs. speed
+![quality vs speed](./results/figures/scifact__speed_vs_quality.png)
+
+Each point is a (provider, model). BM25 lives bottom-right (fast, lower quality);
+dense lives top-middle. There is no Pareto-dominated point yet because we only
+have three indexes; once we add rerank and late-interaction the frontier will
+get more interesting.
+
+#### 5. Index build time vs. retrieval quality
+![build cost](./results/figures/all__build_cost.png)
+
+Useful when the corpus updates frequently and reindex time is part of your
+budget. BM25 is the obvious choice for high-churn corpora.
+
+#### 6. Per-(index, dataset) heatmap
+![heatmap](./results/figures/all__heatmap.png)
+
+Single-dataset for now (only scifact has been run). The cell colors will fill
+in as more BEIR sub-datasets are added; this is the chart that shows which
+index generalizes across domains and which one is dataset-specific.
 
 ## Architecture
 
