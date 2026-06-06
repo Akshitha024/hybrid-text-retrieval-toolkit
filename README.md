@@ -174,11 +174,11 @@ flowchart LR
     D1 --> R
     D2 --> R
     D3 --> R
-    R --> A1[results/dataset__idx__metrics.json]
-    R --> A2[results/dataset__idx__runs.jsonl]
+    R --> A1["results/dataset__idx__metrics.json"]
+    R --> A2["results/dataset__idx__runs.jsonl"]
     A1 --> P[scoring.plots]
     A2 --> P
-    P --> F1[figures/*.png]
+    P --> F1["figures/*.png"]
 ```
 
 ## Known limitations
