@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.14, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/mani/Projects/akshitha-portfolio/projects/hybrid-retriever
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0
+collected 19 items
+
+tests/test_bm25.py ....                                                  [ 21%]
+tests/test_fusion.py ....                                                [ 42%]
+tests/test_metrics.py ......                                             [ 73%]
+tests/test_plots.py .....                                                [100%]
+
+============================== 19 passed in 0.62s ==============================

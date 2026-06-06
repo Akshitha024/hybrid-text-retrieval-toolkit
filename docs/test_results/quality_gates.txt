@@ -1,0 +1,10 @@
+=== ruff check ===
+All checks passed!
+
+=== ruff format --check ===
+Would reformat: src/hr/indexes/base.py
+1 file would be reformatted, 23 files already formatted
+
+=== mypy ===
+Success: no issues found in 19 source files
+

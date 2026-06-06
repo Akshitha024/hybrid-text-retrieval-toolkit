@@ -1,0 +1,27 @@
+...................                                                      [100%]
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.11.14-final-0 _______________
+
+Name                                 Stmts   Miss  Cover
+--------------------------------------------------------
+src/hr/__init__.py                       1      0   100%
+src/hr/cli/__init__.py                   0      0   100%
+src/hr/cli/main.py                      94     94     0%
+src/hr/data.py                          26     26     0%
+src/hr/encoders/__init__.py              0      0   100%
+src/hr/encoders/cross.py                33     33     0%
+src/hr/fusion/__init__.py                0      0   100%
+src/hr/fusion/linear.py                 38      4    89%
+src/hr/fusion/rrf.py                    26      1    96%
+src/hr/indexes/__init__.py               0      0   100%
+src/hr/indexes/base.py                   7      1    86%
+src/hr/indexes/bm25.py                  32      3    91%
+src/hr/indexes/dense.py                 48     48     0%
+src/hr/indexes/late_interaction.py      52     52     0%
+src/hr/scoring/__init__.py               0      0   100%
+src/hr/scoring/metrics.py               52      3    94%
+src/hr/scoring/plots.py                197     81    59%
+src/hr/scoring/runner.py                35     35     0%
+src/hr/types.py                         25      6    76%
+--------------------------------------------------------
+TOTAL                                  666    387    42%
