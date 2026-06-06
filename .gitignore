@@ -12,8 +12,9 @@ venv/
 .coverage
 .coverage.*
 
-# generated artifacts that are big/transient
-indexes/
+# generated artifacts that are big/transient (top-level only; the src/hr/indexes/
+# package is a different thing and stays tracked)
+/indexes/
 data/raw/
 data/processed/
 *.faiss
