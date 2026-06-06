@@ -1,0 +1,35 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.local
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+
+# generated artifacts that are big/transient
+indexes/
+data/raw/
+data/processed/
+*.faiss
+*.pkl
+*.npy
+
+# notebooks
+.ipynb_checkpoints/
+
+# editor
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# hf cache
+.hf-cache/

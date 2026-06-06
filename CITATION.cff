@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: hr — Hybrid retrieval framework
+authors:
+  - family-names: Lingampally
+    given-names: Akshitha Reddy
+type: software
+date-released: 2023-11-04
+repository-code: https://github.com/Akshitha024/hybrid-retriever
+license: MIT
+references:
+  - type: article
+    title: "BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models"
+    authors: [{family-names: Thakur, given-names: Nandan}]
+    year: 2021
+    url: https://arxiv.org/abs/2104.08663
+  - type: article
+    title: "ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction"
+    authors: [{family-names: Santhanam, given-names: Keshav}]
+    year: 2022
+    url: https://arxiv.org/abs/2112.01488
+  - type: article
+    title: "Reciprocal Rank Fusion outperforms Condorcet and individual rank learning methods"
+    authors: [{family-names: Cormack, given-names: Gordon V.}]
+    year: 2009
+    url: https://dl.acm.org/doi/10.1145/1571941.1572114

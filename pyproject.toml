@@ -1,0 +1,76 @@
+[project]
+name = "hr"
+version = "0.4.0"
+description = "Hybrid retrieval framework: BM25 + dense + late-interaction + rerank, with a BEIR-style evaluator."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "Akshitha Reddy Lingampally" }]
+keywords = ["retrieval", "beir", "bm25", "dense", "colbert", "reranker", "ir"]
+
+dependencies = [
+    "datasets>=2.19,<3",
+    "rank-bm25>=0.2.2",
+    "sentence-transformers>=3.0,<4",
+    "transformers>=4.45,<5",
+    "torch>=2.2",
+    "faiss-cpu>=1.8",
+    "numpy>=1.26,<2",
+    "pandas>=2.2",
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+    "tqdm>=4.66",
+    "typer>=0.12",
+    "pydantic>=2.7",
+    "loguru>=0.7",
+    "pyyaml>=6",
+    "tabulate>=0.9",
+    "ir-datasets>=0.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "types-PyYAML",
+    "types-tqdm",
+]
+
+[project.scripts]
+hr = "hr.cli.main:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hr"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E","W","F","I","B","UP","SIM","RUF"]
+ignore = ["E501","B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+ignore_missing_imports = true
+exclude = ["build/","dist/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: tests that download models or BEIR splits",
+    "needs_net: tests that hit the network",
+]
