@@ -1,0 +1,10 @@
+[
+  {"doc_id": "d1", "text": "Vaccination programs reduce mortality from preventable diseases.", "title": "vaccines"},
+  {"doc_id": "d2", "text": "Antibiotic resistance is a growing public health concern.", "title": "AMR"},
+  {"doc_id": "d3", "text": "Climate change impacts agricultural productivity globally.", "title": "climate"},
+  {"doc_id": "d4", "text": "Machine learning models can detect diabetic retinopathy in eye images.", "title": "ML medicine"},
+  {"doc_id": "d5", "text": "Renewable energy adoption is accelerating in OECD countries.", "title": "energy"},
+  {"doc_id": "d6", "text": "Antimicrobial resistance threatens modern surgery and chemotherapy.", "title": "AMR 2"},
+  {"doc_id": "d7", "text": "Deep learning has transformed natural language processing tasks.", "title": "ML NLP"},
+  {"doc_id": "d8", "text": "Sea-level rise will displace millions in coastal regions.", "title": "climate 2"}
+]
