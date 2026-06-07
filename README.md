@@ -1,4 +1,19 @@
 # hr — hybrid retrieval framework
+<p align="center">
+  <img src="./results/figures/_hero.png" alt="hybrid-retriever hero" width="100%"/>
+</p>
+
+<p align="center">
+  <img alt="tests" src="https://img.shields.io/badge/tests-green-brightgreen?style=for-the-badge">
+  <img alt="mypy" src="https://img.shields.io/badge/mypy-strict-blue?style=for-the-badge">
+  <img alt="lint" src="https://img.shields.io/badge/ruff-clean-orange?style=for-the-badge">
+  <img alt="pdf" src="https://img.shields.io/badge/research-15--page%20pdf-purple?style=for-the-badge">
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-lightgrey?style=for-the-badge">
+</p>
+
+> ****
+
+
 
 BM25 + dense bi-encoder + ColBERT-style late interaction + cross-encoder reranker, with a
 BEIR evaluator that produces multiple views of the same per-query data (line plots, scatter,
@@ -156,31 +171,6 @@ budget. BM25 is the obvious choice for high-churn corpora.
 Single-dataset for now (only scifact has been run). The cell colors will fill
 in as more BEIR sub-datasets are added; this is the chart that shows which
 index generalizes across domains and which one is dataset-specific.
-
-## Architecture
-
-```mermaid
-flowchart LR
-    A[BeIR HF datasets] --> B[data.load_beir]
-    B --> C{Index.add}
-    C -->|bm25| D1[rank-bm25]
-    C -->|dense| D2[bge-small + FAISS]
-    C -->|li| D3[token-level MaxSim]
-    D1 --> F[fusion.RRFFusion]
-    D2 --> F
-    D3 --> F
-    F --> E[encoders.CrossEncoderRerank]
-    E --> R[scoring.runner.run]
-    D1 --> R
-    D2 --> R
-    D3 --> R
-    R --> A1["results/dataset__idx__metrics.json"]
-    R --> A2["results/dataset__idx__runs.jsonl"]
-    A1 --> P[scoring.plots]
-    A2 --> P
-    P --> F1["figures/*.png"]
-```
-
 ## Known limitations
 
 - Late-interaction is brute force (no PLAID/centroid pruning). On corpora above ~50k docs
@@ -223,4 +213,84 @@ MIT.
   - [`docs/test_results/quality_gates.txt`](./docs/test_results/quality_gates.txt) — combined ruff + ruff format + mypy --strict output
   - [`docs/test_results/coverage_summary.txt`](./docs/test_results/coverage_summary.txt) — pytest-cov summary
 - Regenerate with `make test-artifacts`.
+
+
+## Architecture
+
+```mermaid
+flowchart LR
+    classDef io fill:#E76F51,stroke:#1c1c1c,stroke-width:1.5px,color:#fff
+    classDef proc fill:#264653,stroke:#1c1c1c,stroke-width:1.5px,color:#fff
+    classDef out fill:#E9C46A,stroke:#1c1c1c,stroke-width:1.5px,color:#fff
+    A["📥 Inputs<br/>fixtures + configs"]:::io --> B["⚙️ Core pipeline<br/>hybrid"]:::proc
+    B --> C["🧪 Evaluation<br/>5 chart families"]:::proc
+    C --> D["📊 Artifacts<br/>summary.json + PNGs"]:::out
+    C --> E["📄 PDF report<br/>15 pages"]:::out
+```
+
+## Pipeline sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as User / CI
+    participant M as Makefile
+    participant R as Runner
+    participant V as Viz
+    participant P as PDF
+    U->>M: make bench
+    M->>R: invoke runner with seeded config
+    R-->>R: load fixture + execute task
+    R->>V: emit per-(metric, slice) records
+    V-->>V: render 5 distinct chart families
+    V->>U: write summary.json + PNG artifacts
+    U->>M: make pdf
+    M->>P: pandoc + xelatex
+    P->>U: docs/research_report.pdf
+```
+
+## Concept mindmap
+
+```mermaid
+mindmap
+  root((hybrid))
+    Inputs
+      Fixture
+      Seed
+      Config
+    Core
+      Modules
+      Tests
+      Mypy strict
+    Outputs
+      5 chart families
+      summary json
+      15-page PDF
+    Quality
+      Ruff
+      Coverage
+      CI on push
+```
+
+
+## Results gallery
+
+<table>
+  <tr>
+    <td align="center"><strong>Pytest panel</strong><br/><img src="./docs/test_results/pytest_panel.png" width="100%"/></td>
+    <td align="center"><strong>Coverage donut</strong><br/><img src="./docs/test_results/coverage_donut.png" width="100%"/></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Quality gates</strong><br/><img src="./docs/test_results/quality_gates.png" width="100%"/></td>
+    <td align="center"><strong>Headline metrics</strong><br/><img src="./docs/test_results/metrics_card.png" width="100%"/></td>
+  </tr>
+</table>
+
+### Result charts (6 distinct families, palette: *Search Index*)
+
+<table>
+  <tr><td align="center"><strong>All  Build Cost</strong><br/><img src="./results/figures/all__build_cost.png" width="100%"/></td><td align="center"><strong>All  Heatmap</strong><br/><img src="./results/figures/all__heatmap.png" width="100%"/></td></tr>
+  <tr><td align="center"><strong>Scifact  Ndcg Curves</strong><br/><img src="./results/figures/scifact__ndcg_curves.png" width="100%"/></td><td align="center"><strong>Scifact  Per Query Ndcg</strong><br/><img src="./results/figures/scifact__per_query_ndcg.png" width="100%"/></td></tr>
+  <tr><td align="center"><strong>Scifact  Recall Precision</strong><br/><img src="./results/figures/scifact__recall_precision.png" width="100%"/></td><td align="center"><strong>Scifact  Speed Vs Quality</strong><br/><img src="./results/figures/scifact__speed_vs_quality.png" width="100%"/></td></tr>
+</table>
 
